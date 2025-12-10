@@ -27,13 +27,25 @@ def convert_csv_to_ics(input_csv, output_ics="output/converted.ics"):
         for row in reader:
             start = to_dt(row.get("開始日"), row.get("開始時刻"))
             end = to_dt(row.get("終了日"), row.get("終了時刻"))
-            summary = row.get("予定", "") or ""
-            detail = row.get("予定詳細", "") or ""
+            summary_raw = row.get("予定", "") or ""
+            detail_raw = row.get("予定詳細", "") or ""
             location = row.get("場所", "") or ""
             uid = row.get("ＩＤ（システムＩＤ：自動発番）", "") or ""
 
             if not start:
                 continue
+
+            # ----------------------------
+            # SUMMARY ロジック（A案）
+            # 予定 + " - " + 予定詳細
+            # ----------------------------
+            if summary_raw and detail_raw:
+                summary = f"{summary_raw} - {detail_raw}"
+            else:
+                summary = summary_raw or detail_raw
+
+            # DESCRIPTION は詳細をそのまま
+            description = detail_raw
 
             allday = "T" not in start
 
@@ -50,7 +62,7 @@ def convert_csv_to_ics(input_csv, output_ics="output/converted.ics"):
                     evt.append(f"DTEND:{end}")
 
             evt.append(f"SUMMARY:{summary}")
-            evt.append(f"DESCRIPTION:{detail}")
+            evt.append(f"DESCRIPTION:{description}")
             evt.append(f"LOCATION:{location}")
             evt.append("END:VEVENT")
 

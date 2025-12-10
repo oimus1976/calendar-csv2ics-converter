@@ -3,17 +3,19 @@
 CSV 形式のスケジュールデータを iCalendar（.ics）形式へ変換する軽量ツールです。  
 Google カレンダー、Outlook、Apple カレンダーなど主要カレンダーへインポート可能です。
 
-本ツールは特定サービス（desknet's NEO 等）の名称を含まず、  
-一般的な CSV → ICS 変換器として利用できます。
+本ツールは特定サービス名（desknet's NEO 等）を含まない汎用仕様で構成されています。
 
 ---
 
 ## 📌 Features
+
 - 任意の CSV を ICS（iCalendar）形式へ変換
 - 開始日・終了日・時刻を解析して VEVENT を生成
 - 時刻がない場合は「終日予定」として扱う
-- 予定詳細・場所にも対応
-- Python だけで動作（外部 API 不要）
+- **SUMMARY（表題）は「予定 + 予定詳細」を自動連結して生成（例：`WEB会議 - 説明会（第2回）`）**
+- DESCRIPTION は CSV の「予定詳細」をそのまま利用
+- 場所（LOCATION）にも対応
+- Python のみで動作（外部 API 不要）
 
 ---
 
@@ -54,7 +56,7 @@ python src/csv2ics.py examples/sample_schedule.csv
 
 ## 📝 CSV Format Requirements
 
-最低限必要な列は以下のとおりです：
+以下の列を持つ CSV を推奨します：
 
 | CSV 列名 | 役割 |
 |---------|------|
@@ -62,18 +64,25 @@ python src/csv2ics.py examples/sample_schedule.csv
 | 開始時刻 | DTSTART（時間） |
 | 終了日 | DTEND |
 | 終了時刻 | DTEND（時間） |
-| 予定 | SUMMARY |
-| 予定詳細 | DESCRIPTION |
+| **予定** | SUMMARY（表題）に使用 |
+| **予定詳細** | SUMMARY（表題）および DESCRIPTION に使用 |
 | 場所 | LOCATION |
-
-日付形式は `YYYY/MM/DD` としてください。
 
 ---
 
 ## 🛡️ Notes
 
-- 本ツールは特定商標（desknet's NEO 等）の使用を避けて設計されています。
-- CSV のカラム名はローカル用途に応じて調整可能です。
-- 公開 OSS としても安全に利用できます。
+- SUMMARY の生成ルールは以下のとおりです：
+
+```
+
+予定 + " - " + 予定詳細
+（どちらかが空の場合は、存在する方のみを使用）
+
+```
+
+- 本ツールは特定商標（desknet's、NEO 等）の使用を避けて設計されています。
+- CSV のカラム名はローカル運用に合わせて自由に拡張・変更できます。
 
 ---
+

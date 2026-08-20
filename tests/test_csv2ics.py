@@ -17,6 +17,3 @@ class TestToDt(unittest.TestCase):
         self.assertIsNone(to_dt("", "08:30"))
         self.assertIsNone(to_dt(None, None))
         self.assertIsNone(to_dt("", ""))
-
-if __name__ == '__main__':
-    unittest.main()

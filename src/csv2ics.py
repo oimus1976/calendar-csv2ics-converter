@@ -18,6 +18,18 @@ def to_dt(date_str, time_str):
     return dt.strftime("%Y%m%dT%H%M%S")
 
 
+def escape_ical_text(text: str) -> str:
+    if not text:
+        return text
+    text = text.replace('\\', '\\\\')
+    text = text.replace(';', '\\;')
+    text = text.replace(',', '\\,')
+    text = text.replace('\r\n', '\\n')
+    text = text.replace('\n', '\\n')
+    text = text.replace('\r', '\\n')
+    return text
+
+
 def convert_csv_to_ics(input_csv, output_ics="output/converted.ics"):
     events = []
 
@@ -61,9 +73,9 @@ def convert_csv_to_ics(input_csv, output_ics="output/converted.ics"):
                 if end:
                     evt.append(f"DTEND:{end}")
 
-            evt.append(f"SUMMARY:{summary}")
-            evt.append(f"DESCRIPTION:{description}")
-            evt.append(f"LOCATION:{location}")
+            evt.append(f"SUMMARY:{escape_ical_text(summary)}")
+            evt.append(f"DESCRIPTION:{escape_ical_text(description)}")
+            evt.append(f"LOCATION:{escape_ical_text(location)}")
             evt.append("END:VEVENT")
 
             events.append("\n".join(evt))
